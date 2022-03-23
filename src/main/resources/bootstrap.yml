@@ -1,0 +1,51 @@
+spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.actuate.autoconfigure.metrics.data.RepositoryMetricsAutoConfiguration
+  application:
+    name: device
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      config:
+        enabled: true
+        fail-fast: true
+server:
+  servlet:
+    context-path: /device
+    register-default-servlet: true
+cloud:
+  aws:
+    region:
+      static: us-west-2
+    stack:
+      auto: false
+    credentials:
+      instanceProfile: false
+      profile-name: wd
+
+aws:
+  secretsmanager:
+    prefix: "/secret"
+    defaultContext: "device"
+    enabled: false
+    profileSeparator: "_"
+    fail-fast: false
+    name: "device"
+management:
+  metrics:
+    enable:
+      tomcat: false
+      jvm: false
+      process: false
+      hikaricp: false
+      system: false
+      jdbc: false
+      logback: false
+    export:
+      cloudwatch:
+        enabled: ${feature.metrics.enabled:false}
+        namespace: ${env.name}-${spring.application.name}
+        step: 1m
+        batch-size: 20
